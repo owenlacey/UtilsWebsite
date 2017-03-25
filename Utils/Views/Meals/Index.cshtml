@@ -1,0 +1,115 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="panel panel-default margin-top-20">
+    <div class="panel-heading">
+        <span>Results</span>
+        <i class="pull-right fa fa-plus colour-red mouse-pointer" onclick="showNewMealModal()"></i>
+    </div>
+    <div class="panel-body" data-bind="with: mealsTable">
+        <div>
+            <div class="row margin-bottom-15">
+                <div class="col-xs-8"></div>
+                <div class="col-xs-4" align="right">
+                    <input class="form-control" type="text" data-bind="value: searchTerm" placeholder="Search" />
+                </div>
+            </div>
+
+            <table class="table table-striped table-bordered">
+                <thead>
+                    <tr>
+                        <td>Name</td>
+                        <td style="width: 60px;"></td>
+                    </tr>
+                </thead>
+
+                <tbody data-bind="foreach: data, visible: data().length > 0" style="display: none;">
+                    <tr>
+                        <td data-bind="text: name"></td>
+                        <td>
+                            <div class="row margin-0" style="text-align: center;">
+                                <span>
+                                    <i data-bind="click: showNewMealModal" class="fa-fw mouse-pointer colour-red fa fa-edit"></i>
+                                </span>
+                                <span>
+                                    <i data-bind="click: $root.delete" class="fa-fw mouse-pointer colour-red fa fa-trash"></i>
+                                </span>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+                <tbody data-bind="visible: data().length === 0 && !loading()" style="display: none;">
+                    <tr>
+                        <td colspan="99">No Meals Found</td>
+                    </tr>
+                </tbody>
+                <tbody>
+                    <tr align="center" data-bind="visible: loading">
+                        <td colspan="99">
+                            <img src="~/Content/Images/ring-alt.gif" />
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div id="new-meal-modal" class="modal fade" tabindex="-1" role="dialog" data-bind="with: newMeal">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">New Meal</h4>
+            </div>
+            <div class="modal-body">
+                <div data-bind="visible: !saving()">
+                    <input id="name-input" class="form-control" type="text" data-bind="value: name" />
+                </div>
+                <div data-bind="visible: saving">
+                    <img src="~/Content/Images/ring-alt.gif" />
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-bind="click: addNewMeal, attr: {'disabled': saving}">Add</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+@section scripts
+{
+    @Scripts.Render("~/MealsIndex")
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+            window.vm = new MealsIndex();
+            ko.applyBindings(window.vm);
+            window.vm.loadData();
+        });
+
+
+        var showNewMealModal = function (meal) {
+            if (meal) {
+                window.vm.newMeal(new MealViewModel(meal.id, ko.toJS(meal)));
+            } else {
+                window.vm.newMeal(new MealViewModel());
+            }
+            $('#new-meal-modal').modal('show');
+        }
+
+        $('#new-meal-modal').on('shown.bs.modal', function () {
+            $('#name-input').focus();
+        });
+
+        var addNewMeal = function () {
+            window.vm.newMeal().save(function () {
+                $('#new-meal-modal').modal('hide');
+                window.vm.loadData();
+            });
+        }
+    </script>
+}
