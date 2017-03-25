@@ -9,7 +9,7 @@ using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web.Http;
-using Utils.Models.Meals;
+using Utils.Models.Shared;
 
 namespace Utils.Controllers.API
 {
@@ -27,9 +27,9 @@ namespace Utils.Controllers.API
         public HttpResponseMessage GetMeals(string searchTerm)
         {
             var dbMeals = _mealsService.GetMeals(searchTerm);
-            var model = dbMeals.Select(m => new MealViewModel
+            var model = dbMeals.Select(m => new IdNameJsonModel
             {
-                MealId = m.MealId,
+                Id = m.MealId,
                 Name = m.Name
             });
             return Request.CreateResponse(HttpStatusCode.OK, model);
@@ -41,11 +41,11 @@ namespace Utils.Controllers.API
         public async Task<HttpResponseMessage> Meal(HttpRequestMessage request)
         {
             var content = await request.Content.ReadAsStringAsync();
-            var meal =  JsonConvert.DeserializeObject<MealViewModel>(content);
+            var meal =  JsonConvert.DeserializeObject<IdNameJsonModel>(content);
 
             var mealToSave = new Meal
             {
-                MealId = meal.MealId.HasValue ? meal.MealId.Value : 0,
+                MealId = meal.Id,
                 Name = meal.Name
             };
 

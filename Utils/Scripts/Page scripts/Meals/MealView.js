@@ -37,3 +37,4 @@ var MealViewModel = (function () {
     }
     return MealViewModel;
 }());
+//# sourceMappingURL=MealView.js.map

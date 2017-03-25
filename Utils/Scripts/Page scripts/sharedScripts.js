@@ -21,3 +21,4 @@ window.confirmFunction = function () {
 window.apiRoute = function (controllerName, actionName) {
     return 'https://localhost:50355/api/' + controllerName + '/' + actionName;
 };
+//# sourceMappingURL=sharedScripts.js.map

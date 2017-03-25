@@ -26,3 +26,4 @@ var MealsPagedTable = (function () {
     }
     return MealsPagedTable;
 }());
+//# sourceMappingURL=MealsPagedTable.js.map
